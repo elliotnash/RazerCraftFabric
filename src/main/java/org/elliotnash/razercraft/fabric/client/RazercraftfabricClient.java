@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.ActionResult;
 import org.elliotnash.razercraft.core.RazerController;
+import org.elliotnash.razercraft.fabric.client.events.DisconnectEvent;
 import org.elliotnash.razercraft.fabric.client.events.HotbarScrollEvent;
 import org.elliotnash.razercraft.fabric.client.events.InventoryUpdateEvent;
 
@@ -27,10 +28,8 @@ public class RazercraftfabricClient implements ClientModInitializer {
         HotbarScrollEvent.EVENT.register((newSlot -> {
 
             controller.activeSlot = newSlot;
-            controller.draw();
 
             return ActionResult.PASS;
-
         }));
 
         InventoryUpdateEvent.EVENT.register((inventory -> {
@@ -42,14 +41,18 @@ public class RazercraftfabricClient implements ClientModInitializer {
                     controller.filledSlots.add(i);
                 }
             }
-            controller.draw();
 
             return ActionResult.PASS;
-
         }));
 
+        DisconnectEvent.EVENT.register((() -> {
 
+            //clear selections when leave game
+            controller.activeSlot = null;
+            controller.filledSlots.clear();
 
+            return ActionResult.PASS;
+        }));
 
 
     }

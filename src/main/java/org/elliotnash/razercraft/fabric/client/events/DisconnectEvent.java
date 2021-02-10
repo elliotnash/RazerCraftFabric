@@ -4,12 +4,12 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.util.ActionResult;
 
-public interface HotbarScrollEvent {
+public interface DisconnectEvent {
 
-    Event<HotbarScrollEvent> EVENT = EventFactory.createArrayBacked(HotbarScrollEvent.class,
-            (listeners) -> (newSlot) -> {
-                for (HotbarScrollEvent listener : listeners) {
-                    ActionResult result = listener.interact(newSlot);
+    Event<DisconnectEvent> EVENT = EventFactory.createArrayBacked(DisconnectEvent.class,
+            (listeners) -> () -> {
+                for (DisconnectEvent listener : listeners) {
+                    ActionResult result = listener.interact();
                     if (result != ActionResult.PASS) {
                         return result;
                     }
@@ -18,7 +18,6 @@ public interface HotbarScrollEvent {
             }
     );
 
-    ActionResult interact(int newSlot);
+    ActionResult interact();
 
 }
-

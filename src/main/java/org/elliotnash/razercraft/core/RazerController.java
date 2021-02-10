@@ -32,60 +32,68 @@ public class RazerController {
 
     lightingManager = new LightingManager(connection, deviceManager.getDevices().get(0));
 
-    draw();
+    drawThread.start();
 
   }
 
   long lastDraw = System.currentTimeMillis();
-  public void draw() {
-    //do draw processing in new thread
-    new Thread(() -> {
-      //limit draw calls to refresh rate
-      if (lastDraw > System.currentTimeMillis()-refreshRate){
-        return;
-      }
-      lastDraw = System.currentTimeMillis();
 
-      for (int i = 0; i < lightingManager.matrix.length; i++) {
-        for (int j = 0; j < lightingManager.matrix[i].length; j++) {
-          // matrix[i][j] = new int[] { 15, 50, 0 };
+  Thread drawThread = new Thread(() -> {
+      while (true) {
+        //limit draw calls to refresh rate
+        if (lastDraw > System.currentTimeMillis() - refreshRate) {
+          return;
         }
+        lastDraw = System.currentTimeMillis();
+
+        for (int i = 0; i < lightingManager.matrix.length; i++) {
+          for (int j = 0; j < lightingManager.matrix[i].length; j++) {
+            // matrix[i][j] = new int[] { 15, 50, 0 };
+          }
+        }
+
+        // colours
+        Color wasdColor = Color.LAVENDER;
+        Color ctrlShiftColor = Color.PURPLE;
+        Color emptySlotColor = Color.BLUE;
+        Color filledSlotColor = Color.LAVENDER;
+        Color activeSlotColor = Color.WHITE;
+
+        // wasd
+        lightingManager.matrix[2][3] = wasdColor;
+        lightingManager.matrix[3][2] = wasdColor;
+        lightingManager.matrix[3][3] = wasdColor;
+        lightingManager.matrix[3][4] = wasdColor;
+        //ctrl+shift
+        lightingManager.matrix[4][1] = ctrlShiftColor;
+        lightingManager.matrix[5][1] = ctrlShiftColor;
+
+        //hotbar
+        for (int i = 2; i < 11; i++) {
+          lightingManager.matrix[1][i] = emptySlotColor;
+        }
+
+        //filled hotbar slots
+        for (int slot : filledSlots) {
+          lightingManager.matrix[1][slot + 2] = filledSlotColor;
+        }
+
+        // active item
+        if (activeSlot != null) {
+          // then we draw last pressed key
+          lightingManager.matrix[1][activeSlot + 2] = activeSlotColor;
+        }
+
+        lightingManager.drawMatrix();
+
+        //lets sleep this
+        try {
+          Thread.sleep(refreshRate);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+
       }
-
-      // colours
-      Color wasdColor = Color.LAVENDER;
-      Color ctrlShiftColor = Color.PURPLE;
-      Color emptySlotColor = Color.BLUE;
-      Color filledSlotColor = Color.LAVENDER;
-      Color activeSlotColor = Color.WHITE;
-
-      // wasd
-      lightingManager.matrix[2][3] = wasdColor;
-      lightingManager.matrix[3][2] = wasdColor;
-      lightingManager.matrix[3][3] = wasdColor;
-      lightingManager.matrix[3][4] = wasdColor;
-      //ctrl+shift
-      lightingManager.matrix[4][1] = ctrlShiftColor;
-      lightingManager.matrix[5][1] = ctrlShiftColor;
-
-      //hotbar
-      for (int i = 2; i < 11; i++) {
-        lightingManager.matrix[1][i] = emptySlotColor;
-      }
-
-      //filled hotbar slots
-      for (int slot: filledSlots){
-        lightingManager.matrix[1][slot+2] = filledSlotColor;
-      }
-
-      // active item
-      if (activeSlot != null) {
-        // then we draw last pressed key
-        lightingManager.matrix[1][activeSlot +2] = activeSlotColor;
-      }
-
-      lightingManager.drawMatrix();
-    }).start();
-  }
+  });
 
 }

@@ -6,7 +6,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import org.elliotnash.razercraft.fabric.client.RazercraftfabricClient;
 import org.elliotnash.razercraft.fabric.client.events.HotbarScrollEvent;
+import org.elliotnash.razercraft.fabric.client.events.InventoryUpdateEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,6 +26,11 @@ public class ClientInventoryMixin {
     @Inject(at = @At("TAIL"), method = "scrollInHotbar")
     private void dropItem(double scrollAmount, CallbackInfo ci){
         HotbarScrollEvent.EVENT.invoker().interact(selectedSlot);
+    }
+
+    @Inject(at = @At("TAIL"), method = "setStack")
+    private void updateItems(int slot, ItemStack stack, CallbackInfo ci){
+        InventoryUpdateEvent.EVENT.invoker().interact(RazercraftfabricClient.minecraft.player.inventory);
     }
 
 }
