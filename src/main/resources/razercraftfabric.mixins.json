@@ -7,7 +7,8 @@
   ],
   "client": [
     "ClientInventoryMixin",
-    "NetworkHandlerMixin"
+    "NetworkHandlerMixin",
+    "MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1
