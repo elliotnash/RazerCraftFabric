@@ -21,6 +21,11 @@ dependencies {
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
+
+    //dependancies
+    compile group: 'com.github.hypfvieh', name: 'dbus-java', version: '3.2.4'
+    //include group: 'com.github.hypfvieh', name: 'dbus-java', version: '3.2.4'
+
 }
 
 processResources {
